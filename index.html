@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Setting up the document metadata and character encoding for proper display -->
+    <meta charset="UTF-8">
+    <!-- Ensuring the page is responsive across different devices and screen sizes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Setting the page title that appears in the browser tab -->
+    <title>Interactive Navigation Menu</title>
+    
+    <style>
+        /* Resetting default margins and padding to ensure consistent styling across browsers */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Setting up the body with a smooth scrolling behavior for better user experience */
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Creating the fixed navigation bar that stays at the top of the page */
+        .navbar {
+            position: fixed; /* Keeps the navbar fixed at the top while scrolling */
+            top: 0; /* Positions the navbar at the very top of the viewport */
+            left: 0; /* Aligns the navbar to the left edge of the screen */
+            width: 100%; /* Makes the navbar span the full width of the screen */
+            background: rgba(255, 255, 255, 0.95); /* Semi-transparent white background */
+            backdrop-filter: blur(10px); /* Applies a blur effect to content behind the navbar */
+            padding: 1rem 2rem; /* Adds internal spacing around the navbar content */
+            transition: all 0.3s ease; /* Smooth transition for any changes to the navbar */
+            z-index: 1000; /* Ensures the navbar appears above other content */
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+
+        /* Special styling for the navbar when the page is scrolled */
+        .navbar.scrolled {
+            background: rgba(102, 126, 234, 0.95); /* Changes to a purple-blue background when scrolled */
+            padding: 0.5rem 2rem; /* Reduces padding to make the navbar more compact */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); /* Increases shadow for more prominent appearance */
+        }
+
+        /* Container for the navigation content with flexible layout */
+        .nav-container {
+            display: flex; /* Uses flexbox for easy alignment of navigation elements */
+            justify-content: space-between; /* Spreads logo and menu items to opposite ends */
+            align-items: center; /* Vertically centers all navigation elements */
+            max-width: 1200px; /* Limits the maximum width for better readability */
+            margin: 0 auto; /* Centers the navigation container on the page */
+        }
+
+        /* Styling for the logo or brand name */
+        .logo {
+            font-size: 1.8rem; /* Makes the logo text larger and more prominent */
+            font-weight: bold; /* Makes the logo text bold for emphasis */
+            color: #333; /* Dark gray color for good readability */
+            text-decoration: none; /* Removes underline from the logo link */
+            transition: color 0.3s ease; /* Smooth color transition on hover */
+        }
+
+        /* Changes logo color when navbar is scrolled */
+        .navbar.scrolled .logo {
+            color: white; /* White text for contrast against the dark scrolled background */
+        }
+
+        /* Container for the navigation menu items */
+        .nav-menu {
+            display: flex; /* Arranges menu items in a horizontal row */
+            list-style: none; /* Removes bullet points from the list */
+            gap: 2rem; /* Adds space between each menu item */
+        }
+
+        /* Individual navigation menu items */
+        .nav-item {
+            position: relative; /* Allows positioning of pseudo-elements for hover effects */
+        }
+
+        /* Styling for navigation links */
+        .nav-link {
+            text-decoration: none; /* Removes underline from links */
+            color: #333; /* Dark gray color for good readability */
+            font-weight: 500; /* Medium font weight for clear visibility */
+            padding: 0.5rem 1rem; /* Adds clickable area around the text */
+            border-radius: 25px; /* Rounds the corners for a modern pill-shaped button */
+            transition: all 0.3s ease; /* Smooth transition for hover effects */
+            position: relative; /* Enables positioning for pseudo-elements */
+            overflow: hidden; /* Hides any overflow from animation effects */
+        }
+
+        /* Hover effect for navigation links */
+        .nav-link:hover {
+            color: white; /* Changes text color to white on hover */
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4); /* Colorful gradient background on hover */
+            transform: translateY(-2px); /* Lifts the link slightly for a floating effect */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Adds shadow for depth */
+        }
+
+        /* Navigation links when navbar is scrolled */
+        .navbar.scrolled .nav-link {
+            color: white; /* White text for contrast against dark background */
+        }
+
+        /* Hover effect for navigation links when navbar is scrolled */
+        .navbar.scrolled .nav-link:hover {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef); /* Softer gradient for scrolled state */
+            color: #333; /* Dark text for better contrast */
+        }
+
+        /* Active navigation link styling - highlights the current section */
+        .nav-link.active {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1); /* Bold colorful gradient for active state */
+            color: white; /* White text for strong contrast */
+            font-weight: bold; /* Makes the text bold for emphasis */
+            transform: scale(1.1); /* Slightly enlarges the active link */
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4); /* Glowing shadow effect */
+        }
+
+        /* Active navigation link when navbar is scrolled */
+        .navbar.scrolled .nav-link.active {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef, #a8edea); /* Different gradient for scrolled state */
+            color: #333; /* Dark text for better readability on light gradient */
+            font-weight: bold; /* Keeps the bold styling */
+            box-shadow: 0 5px 20px rgba(255, 154, 158, 0.4); /* Matching glow effect */
+        }
+
+        /* Main content sections with individual styling */
+        .section {
+            min-height: 100vh; /* Each section takes up at least the full viewport height */
+            padding: 6rem 2rem 2rem; /* Top padding accounts for fixed navbar */
+            display: flex; /* Flexbox for easy content alignment */
+            align-items: center; /* Vertically centers content */
+            justify-content: center; /* Horizontally centers content */
+            flex-direction: column; /* Stacks content vertically */
+        }
+
+        /* Unique background colors for each section */
+        .section:nth-child(1) { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .section:nth-child(2) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .section:nth-child(3) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .section:nth-child(4) { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .section:nth-child(5) { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+
+        /* Styling for section titles */
+        .section h2 {
+            font-size: 3rem; /* Large font size for section headings */
+            margin-bottom: 1rem; /* Space below the heading */
+            color: white; /* White text for contrast */
+            text-align: center; /* Centers the heading text */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Adds shadow for better readability */
+        }
+
+        /* Styling for section paragraphs */
+        .section p {
+            font-size: 1.2rem; /* Slightly larger text for better readability */
+            max-width: 600px; /* Limits line length for comfortable reading */
+            text-align: center; /* Centers the paragraph text */
+            color: white; /* White text for contrast */
+            margin-bottom: 2rem; /* Space below paragraphs */
+        }
+
+        /* Container for images within sections */
+        .image-container {
+            display: flex; /* Flexbox for image layout */
+            gap: 1rem; /* Space between images */
+            flex-wrap: wrap; /* Allows images to wrap to new lines */
+            justify-content: center; /* Centers the images */
+            margin-top: 2rem; /* Space above the image container */
+        }
+
+        /* Styling for images */
+        .section-image {
+            width: 300px; /* Fixed width for consistency */
+            height: 200px; /* Fixed height for consistency */
+            object-fit: cover; /* Maintains aspect ratio while filling the container */
+            border-radius: 15px; /* Rounds the image corners */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); /* Adds shadow for depth */
+            transition: transform 0.3s ease; /* Smooth scaling transition */
+        }
+
+        /* Hover effect for images */
+        .section-image:hover {
+            transform: scale(1.05); /* Slightly enlarges the image on hover */
+        }
+
+        /* Responsive design for mobile devices */
+        @media (max-width: 768px) {
+            /* Adjusts navigation menu for smaller screens */
+            .nav-menu {
+                gap: 1rem; /* Reduces space between menu items */
+            }
+            
+            /* Reduces logo size on mobile */
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            /* Adjusts section headings for mobile */
+            .section h2 {
+                font-size: 2rem;
+            }
+            
+            /* Makes images smaller on mobile devices */
+            .section-image {
+                width: 250px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed navigation bar that stays at the top of the page -->
+    <nav class="navbar" id="navbar">
+        <!-- Container that holds all navigation elements -->
+        <div class="nav-container">
+            <!-- Logo or brand name that links to the home section -->
+            <a href="#home" class="logo">NavMenu</a>
+            
+            <!-- Unordered list containing all navigation menu items -->
+            <ul class="nav-menu">
+                <!-- Home navigation item -->
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <!-- About navigation item -->
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">About</a>
+                </li>
+                <!-- Services navigation item -->
+                <li class="nav-item">
+                    <a href="#services" class="nav-link">Services</a>
+                </li>
+                <!-- Portfolio navigation item -->
+                <li class="nav-item">
+                    <a href="#portfolio" class="nav-link">Portfolio</a>
+                </li>
+                <!-- Contact navigation item -->
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Home section with welcome content -->
+    <section id="home" class="section">
+        <h2>Welcome Home</h2>
+        <p>This is the home section showcasing our beautiful interactive navigation menu. Notice how the navbar changes as you scroll down the page!</p>
+        <div class="image-container">
+            <!-- Home-related images -->
+            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop" alt="Modern home interior" class="section-image">
+            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=250&fit=crop" alt="Cozy living room" class="section-image">
+        </div>
+    </section>
+
+    <!-- About section with company information -->
+    <section id="about" class="section">
+        <h2>About Us</h2>
+        <p>Learn more about our company and what we do. We specialize in creating beautiful, interactive web experiences with modern design principles.</p>
+        <div class="image-container">
+            <!-- Team and office-related images -->
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=250&fit=crop" alt="Team collaboration" class="section-image">
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=250&fit=crop" alt="Modern office space" class="section-image">
+        </div>
+    </section>
+
+    <!-- Services section detailing what we offer -->
+    <section id="services" class="section">
+        <h2>Our Services</h2>
+        <p>We provide comprehensive web development services including responsive design, interactive animations, and user experience optimization.</p>
+        <div class="image-container">
+            <!-- Service-related images -->
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop" alt="Web development" class="section-image">
+            <img src="https://images.unsplash.com/photo-1555421689-491a97ff2040?w=400&h=250&fit=crop" alt="Design services" class="section-image">
+        </div>
+    </section>
+
+    <!-- Portfolio section showcasing our work -->
+    <section id="portfolio" class="section">
+        <h2>Portfolio</h2>
+        <p>Check out some of our recent projects and see how we bring creative ideas to life through code and design.</p>
+        <div class="image-container">
+            <!-- Portfolio project images -->
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop" alt="Portfolio project 1" class="section-image">
+            <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=250&fit=crop" alt="Portfolio project 2" class="section-image">
+        </div>
+    </section>
+
+    <!-- Contact section for getting in touch -->
+    <section id="contact" class="section">
+        <h2>Contact Us</h2>
+        <p>Ready to start your next project? Get in touch with us and let's create something amazing together!</p>
+        <div class="image-container">
+            <!-- Contact-related images -->
+            <img src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=400&h=250&fit=crop" alt="Contact us" class="section-image">
+            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop" alt="Get in touch" class="section-image">
+        </div>
+    </section>
+
+    <script>
+        // Getting a reference to the navbar element so we can modify it
+        const navbar = document.getElementById('navbar');
+        // Getting all navigation links so we can highlight the active one
+        const navLinks = document.querySelectorAll('.nav-link');
+        // Getting all sections so we can detect which one is currently visible
+        const sections = document.querySelectorAll('.section');
+        
+        // Function to update which navigation link is active based on scroll position
+        function updateActiveNavLink() {
+            // Getting the current scroll position
+            let currentSection = '';
+            
+            // Checking each section to see which one is currently in view
+            sections.forEach(section => {
+                // Getting the section's position and height
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                
+                // Checking if the current scroll position is within this section
+                // We subtract 100 to account for the navbar height
+                if (window.scrollY >= (sectionTop - 100)) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            // Removing the active class from all navigation links
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Adding the active class to the current section's navigation link
+            if (currentSection) {
+                const activeLink = document.querySelector(`a[href="#${currentSection}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+        }
+        
+        // Adding an event listener that triggers when the user scrolls the page
+        window.addEventListener('scroll', function() {
+            // Checking how far the user has scrolled from the top of the page
+            if (window.scrollY > 50) {
+                // If scrolled more than 50 pixels, add the 'scrolled' class to change navbar appearance
+                navbar.classList.add('scrolled');
+            } else {
+                // If scrolled less than 50 pixels, remove the 'scrolled' class to restore original appearance
+                navbar.classList.remove('scrolled');
+            }
+            
+            // Update which navigation link should be highlighted as active
+            updateActiveNavLink();
+        });
+
+        // Getting all navigation links so we can add smooth scrolling behavior
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        // Adding click event listeners to each navigation link
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Preventing the default link behavior to implement custom smooth scrolling
+                e.preventDefault();
+                
+                // Getting the target section ID from the link's href attribute
+                const targetId = this.getAttribute('href').substring(1);
+                // Finding the target section element on the page
+                const targetSection = document.getElementById(targetId);
+                
+                // If the target section exists, scroll to it smoothly
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth', // Creates a smooth scrolling animation
+                        block: 'start' // Aligns the target section to the top of the viewport
+                    });
+                }
+            });
+        });
+
+        // Adding hover effects to navigation links for enhanced interactivity
+        navLinks.forEach(link => {
+            // Adding mouseover event to create entrance effect
+            link.addEventListener('mouseenter', function() {
+                // Adding a subtle scaling effect when hovering over a link
+                this.style.transform = 'translateY(-2px) scale(1.05)';
+            });
+            
+            // Adding mouseout event to reset the effect
+            link.addEventListener('mouseleave', function() {
+                // Resetting the transform when no longer hovering
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Adding a scroll progress indicator to show how much of the page has been scrolled
+        function updateScrollProgress() {
+            // Calculating the total scrollable height of the page
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            // Calculating the current scroll position as a percentage
+            const scrolled = (window.scrollY / scrollHeight) * 100;
+            
+            // Creating a visual progress indicator by adjusting the navbar's border
+            navbar.style.borderBottom = `3px solid rgba(255, 255, 255, ${scrolled / 100})`;
+        }
+
+        // Adding the scroll progress function to the scroll event listener
+        window.addEventListener('scroll', updateScrollProgress);
+        
+        // Running the progress function once when the page loads
+        updateScrollProgress();
+        
+        // Initialize the active navigation link when the page first loads
+        updateActiveNavLink();
+    </script>
+</body>
+</html>
